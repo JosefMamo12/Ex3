@@ -15,6 +15,9 @@ class EdgeData:
     def get_weight(self) -> float:
         return self._weight
 
+    def set_weight(self, weight) -> None:
+        self._weight = weight
+
     def get_info(self) -> str:
         return self._info
 
