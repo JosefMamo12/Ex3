@@ -8,7 +8,6 @@ class DiGraph(GraphInterface):
         self._edgeOut = {}
         self._edgeIn = {}
         self._nodes = {}
-        self._nodes_size = 0
         self._edge_size = 0
         self._mc = 0
 
@@ -50,11 +49,11 @@ class DiGraph(GraphInterface):
         if node_id in self._nodes:
             return False
         node = NodeData(node_id)
-        node.set_pos(pos[0], pos[1], pos[2])
+        if pos:
+            node.set_pos(float(pos[0]), float(pos[1]), float(pos[2]))
         self._nodes[node_id] = node
         self._edgeOut[node_id] = {}
         self._edgeIn[node_id] = {}
-        self._nodes_size = self._nodes_size + 1
         self._mc = self._mc + 1
         return True
 
@@ -84,3 +83,13 @@ class DiGraph(GraphInterface):
 
     def get_edge_in(self) -> dict:
         return self._edgeIn
+
+    def __repr__(self):
+        ans = "Graph:[Nodes: " + str(len(self._nodes)) + " Edges: " + str(self._edge_size) + "\n"
+        for node in self._nodes:
+            ans += "Node: " + str(node) + " -> Neighbours: "
+            for neigh in self._edgeOut[node]:
+                ans += str(neigh) + ', '
+            ans += "\n"
+        ans += "]"
+        return ans
