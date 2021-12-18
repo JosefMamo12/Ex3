@@ -1,9 +1,12 @@
+from json import JSONEncoder
+from typing import Any
+
 from GraphInterface import GraphInterface
 from EdgeData import EdgeData
 from NodeData import NodeData
 
 
-class DiGraph(GraphInterface):
+class DiGraph(GraphInterface, JSONEncoder):
     def __init__(self):
         self._edgeOut = {}
         self._edgeIn = {}
@@ -93,3 +96,7 @@ class DiGraph(GraphInterface):
             ans += "\n"
         ans += "]"
         return ans
+
+    def get_edge(self, src, dest) -> EdgeData:
+        if src in self._nodes and dest in self._nodes and dest in self._edgeOut[src]:
+            return self._edgeOut[src][dest]
