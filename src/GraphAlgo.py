@@ -5,9 +5,11 @@ from GraphAlgoInterface import GraphAlgoInterface
 from DiGraph import DiGraph
 from NodeData import NodeData
 from queue import PriorityQueue
+import sys
 
 
 def dfs(g: DiGraph, starting_node: NodeData):
+    clean(g)
     st = [starting_node]
     while len(st) > 0:
         curr_node = st.pop()
@@ -34,11 +36,17 @@ def graph_transposer(g: DiGraph) -> DiGraph:
             e = g.get_edge(node_id, edge_id)
             graph_trans.add_node(edge_id)
             graph_trans.add_edge(e.get_dest(), e.get_src(), e.get_weight())
-
     return graph_trans
 
 
+def clean(g: DiGraph) -> None:
+    for key in g.get_all_v():
+        g.get_node(key).set_tag(0)
+        g.get_node(key).set_weight(sys.float_info.max)
+
+
 def dijkstra(g: DiGraph, start, end=None):
+    clean(g)
     p = {}
     q = PriorityQueue()
     node = g.get_node(start)
@@ -47,6 +55,8 @@ def dijkstra(g: DiGraph, start, end=None):
     while not q.empty():
         curr_node = q.get()
         curr_key = curr_node[1]
+        if curr_key == end:
+            break
         for neigh in g.all_out_edges_of_node(curr_key):
             e = g.get_edge(curr_key, neigh)
             if g.get_node(e.get_dest()).get_tag() == 0:
@@ -54,9 +64,11 @@ def dijkstra(g: DiGraph, start, end=None):
                 weight = g.get_node(curr_key).get_weight() + e.get_weight()
                 if weight < neigh_node.get_weight():
                     neigh_node.set_weight(weight)
-                    p[neigh_node] = curr_key
+                    p[neigh] = curr_key
                     q.put((neigh_node.get_weight(), neigh_node.get_key()))
             g.get_node(curr_key).set_tag(1)
+    distance = g.get_node(end).get_weight()
+    return p, distance
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -141,7 +153,15 @@ class GraphAlgo(GraphAlgoInterface):
             return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        pass
+        p, d = dijkstra(self._g, id1, id2)
+        path = []
+        while True:
+            path.append(id2)
+            if id1 == id2:
+                break
+            id2 = p[id2]
+        path.reverse()
+        return d, path
 
     def plot_graph(self) -> None:
         pass

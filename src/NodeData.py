@@ -1,10 +1,13 @@
+import sys
+
+
 class NodeData:
     def __init__(self, key: int):
         self._key = key
         self._pos = None
         self._info = ''
         self._tag = 0
-        self._weight = float('inf')
+        self._weight = sys.float_info.max
 
     def get_key(self) -> int:
         return self._key

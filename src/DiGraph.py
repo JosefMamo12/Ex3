@@ -6,7 +6,7 @@ from EdgeData import EdgeData
 from NodeData import NodeData
 
 
-class DiGraph(GraphInterface, JSONEncoder):
+class DiGraph(GraphInterface):
     def __init__(self):
         self._edgeOut = {}
         self._edgeIn = {}

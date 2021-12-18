@@ -2,6 +2,7 @@ import unittest
 
 from GraphCreator import GraphCreator
 from GraphAlgo import GraphAlgo
+from DiGraph import DiGraph
 
 
 class MyTestCase(unittest.TestCase):
@@ -25,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         g1 = GraphCreator(1, 100, 2000)
         graph1 = g1.create_graph()
         g_algo1 = GraphAlgo(graph1)
-        # self.assertEqual(True, g_algo1.connected())
+        self.assertEqual(True, g_algo1.connected())
         # g1 = GraphCreator(1, 1000, 20000)
         # graph1 = g1.create_graph()
         # g_algo1 = GraphAlgo(graph1)
@@ -42,6 +43,15 @@ class MyTestCase(unittest.TestCase):
         # graph1 = g1.create_graph()
         # g_algo1 = GraphAlgo(graph1)
         # self.assertEqual(True, g_algo1.connected())
+
+    def test_shortest_path(self):
+        g = DiGraph()
+        graph_algo = GraphAlgo(g)
+        graph_algo.load_from_json("../data/A0.json")
+        print(graph_algo.connected())
+        p, g = graph_algo.shortest_path(0, 5)
+        print(p)
+        print(g)
 
 
 if __name__ == '__main__':
