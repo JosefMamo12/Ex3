@@ -50,8 +50,7 @@ class MyTestCase(unittest.TestCase):
         graph_algo.load_from_json("../data/A0.json")
         print(graph_algo.connected())
         p, g = graph_algo.shortest_path(0, 5)
-        print(p)
-        print(g)
+        self.assertEqual(g, [0, 1, 2, 3, 4, 5])
 
 
 if __name__ == '__main__':

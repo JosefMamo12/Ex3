@@ -55,7 +55,7 @@ def dijkstra(g: DiGraph, start, end=None):
     while not q.empty():
         curr_node = q.get()
         curr_key = curr_node[1]
-        if curr_key == end:
+        if end is not None and curr_key == end:
             break
         for neigh in g.all_out_edges_of_node(curr_key):
             e = g.get_edge(curr_key, neigh)
@@ -67,8 +67,8 @@ def dijkstra(g: DiGraph, start, end=None):
                     p[neigh] = curr_key
                     q.put((neigh_node.get_weight(), neigh_node.get_key()))
             g.get_node(curr_key).set_tag(1)
-    distance = g.get_node(end).get_weight()
-    return p, distance
+    if end is not None:
+        return p, g.get_node(end).get_weight()
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -101,12 +101,29 @@ class GraphAlgo(GraphAlgoInterface):
         return self._g
 
     def centerPoint(self) -> (int, float):
+        clean(self._g)
+        if self.connected():
+            center = None
+            highest_dist = sys.float_info.max
+            for curr in self._g.get_all_v():
+                dist = sys.float_info.min
+                dijkstra(self._g, curr)
+                for dist_curr in self._g.get_all_v():
+                    temp_dist = self._g.get_node(dist_curr).get_weight()
+                    if temp_dist > dist:
+                        dist = temp_dist
+                if highest_dist < dist:
+                    highest_dist = dist
+                    center = curr
+            return center, highest_dist
         pass
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
+
         pass
 
     def load_from_json(self, file_name: str) -> bool:
+
         try:
             with open(file_name, 'r+') as f:
                 json_graph = json.load(f)
