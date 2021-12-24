@@ -42,4 +42,5 @@ class NodeData:
         self._pos = (x, y, z)
 
     def __repr__(self):
-        return 'NodeData[Key:' + str(self._key) + ' Weight:' + str(self._weight) + ' ' + str(self._pos) + ']'
+        return 'NodeData[Key:' + str(self._key) + ' Weight:' + str(self._weight) + ' ' + str(self._pos) + 'Tag: ' + str(
+            self._tag) + ']'

@@ -1,8 +1,8 @@
+import random
 from json import JSONEncoder
 from typing import Any
 
 from GraphInterface import GraphInterface
-from EdgeData import EdgeData
 from NodeData import NodeData
 
 
@@ -37,8 +37,8 @@ class DiGraph(GraphInterface):
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
         if id1 != id2 and id1 in self._nodes and id2 in self._nodes and id2 not in self._edgeOut[id1] and weight > 0:
-            self._edgeOut[id1][id2] = EdgeData(id1, id2, weight)
-            self._edgeIn[id2][id1] = id1
+            self._edgeOut[id1][id2] = weight
+            self._edgeIn[id2][id1] = weight
             self._edge_size = self._edge_size + 1
             self._mc = self._mc + 1
             return True
@@ -54,10 +54,13 @@ class DiGraph(GraphInterface):
         node = NodeData(node_id)
         if pos:
             node.set_pos(float(pos[0]), float(pos[1]), float(pos[2]))
+        else:
+            node.set_pos(float(random.uniform(35, 36)), float(random.uniform(32, 33)), float(0.0))
         self._nodes[node_id] = node
         self._edgeOut[node_id] = {}
         self._edgeIn[node_id] = {}
         self._mc = self._mc + 1
+
         return True
 
     def remove_node(self, node_id: int) -> bool:
@@ -96,7 +99,3 @@ class DiGraph(GraphInterface):
             ans += "\n"
         ans += "]"
         return ans
-
-    def get_edge(self, src, dest) -> EdgeData:
-        if src in self._nodes and dest in self._nodes and dest in self._edgeOut[src]:
-            return self._edgeOut[src][dest]
