@@ -8,10 +8,14 @@ from GraphAlgoInterface import GraphAlgoInterface
 from DiGraph import DiGraph
 from NodeData import NodeData
 from queue import PriorityQueue
+
 import sys
 
 
 def clean(g: DiGraph) -> None:
+    """
+    Cleaning the graph be doing any algorithm.
+    """
     if g is not None:
         for key in g.get_all_v():
             g.get_node(key).set_tag(0)
@@ -20,6 +24,10 @@ def clean(g: DiGraph) -> None:
 
 
 def dfs(g: DiGraph, starting_node: NodeData):
+    """
+    famous greedy algorithm which find if from starting_node the node is connected to all others node
+    param: g, starting_node
+    """
     clean(g)
     st = [starting_node]
     while len(st) > 0:
@@ -32,6 +40,10 @@ def dfs(g: DiGraph, starting_node: NodeData):
 
 
 def check_graph_connectivity(g: DiGraph) -> bool:
+    """
+    Private function which help to connect function
+    """
+
     for node_data in g.get_all_v():
         curr = g.get_node(node_data)
         if curr.get_tag() == 0:
@@ -40,14 +52,40 @@ def check_graph_connectivity(g: DiGraph) -> bool:
 
 
 class GraphAlgo(GraphAlgoInterface):
+    """
+    Graph algo class which represent all the algorithm that can do on graph
+    *TSP: to find the shortest path between a bunch of cities.
+    *The Shortest Path: to check the shortest path from source node to end node
+    *Connected: to see if the graph is strongly connected
+    *CenterPoint: to find the center of the graph
+    *Load: load graph from json
+    *Save: save graph to json
+    """
+    def __init__(self, graph: DiGraph = None):
+        """
+        Regular graph_algo constructor
+        @param DiGraph to initialize graph in it
+        """
+        if graph is not None:
+            self._g = graph
+        else:
+            self._g = DiGraph()
+        self._parent = {}
 
     def reset(self):
+        """
+        Useful only for load function to load new graph
+        """
         if self._g.get_all_v():
             self._g.get_all_v().clear()
             self._g.get_edge_out().clear()
             self._g.get_edge_in().clear()
 
     def graph_transposer(self) -> DiGraph:
+        """
+         To check connectivity of directed graph need to transpose the graph
+         and run to each direction from the same node dfs.
+         """
         graph_trans = DiGraph()
         for node_id in self._g.get_all_v():
             graph_trans.add_node(node_id)
@@ -57,6 +95,12 @@ class GraphAlgo(GraphAlgoInterface):
         return graph_trans
 
     def dijkstra(self, start, end=None):
+        """
+        Dijkstra's original algorithm found the shortest path between two given nodes, but a more common variant
+        fixes a single node as the "source" node and finds shortest paths from the source to all other nodes in the
+        graph, producing a shortest-path tree.
+        @param: start,end optional
+        """
         clean(self._g)
         p = {}
         q = PriorityQueue()
@@ -81,14 +125,12 @@ class GraphAlgo(GraphAlgoInterface):
         if end is not None:
             return p, self._g.get_node(end).get_weight()
 
-    def __init__(self, graph: DiGraph = None):
-        if graph is not None:
-            self._g = graph
-        else:
-            self._g = DiGraph()
-        self._parent = {}
-
     def connected(self) -> bool:
+        """
+        Directed graph called connected if and only if from each u from V there is a path
+        to each w from V.
+        @return True if the graph is strongly connected
+        """
         if self._g.get_all_v() is not None:
             g_trans = self.graph_transposer()
             for i in range(2):
@@ -109,9 +151,16 @@ class GraphAlgo(GraphAlgoInterface):
         return True
 
     def get_graph(self) -> GraphInterface:
+        """
+        :return: the directed graph on which the algorithm works on.
+        """
         return self._g
 
     def centerPoint(self) -> (int, float):
+        """
+         Finds the node that has the shortest distance to it's farthest node.
+         return: The nodes id, min-maximum distance
+         """
         clean(self._g)
         if self.connected():
             center = None
@@ -131,6 +180,11 @@ class GraphAlgo(GraphAlgoInterface):
         return -1, float('inf')
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
+        """
+        Finds the shortest path that visits all the nodes in the list
+        param: node_lst: A list of nodes id's
+        return: A list of the nodes id's in the path, and the overall distance
+        """
         clean(self._g)
         if node_lst is None or len(node_lst) == 1:
             return [], -1
@@ -220,6 +274,11 @@ class GraphAlgo(GraphAlgoInterface):
             return max_dist, ans
 
     def build_graph_only_for_cities(self, node_lst: List[int]) -> DiGraph:
+        """
+        Build sub graph which contains only the edges that belong to the specific node list
+        @param: List[int]
+        @return: DiGraph
+        """
         dwg = DiGraph()
         temp_cities = copy.deepcopy(node_lst)
         for city in temp_cities:
@@ -235,6 +294,11 @@ class GraphAlgo(GraphAlgoInterface):
         return dwg
 
     def load_from_json(self, file_name: str) -> bool:
+        """
+        Loads a graph from a json file.
+        @param file_name: The path to the json file
+        @returns True if the loading was successful, False o.w.
+        """
         self.reset()
         try:
             with open(file_name, 'r+') as f:
@@ -254,6 +318,11 @@ class GraphAlgo(GraphAlgoInterface):
             return False
 
     def save_to_json(self, file_name: str) -> bool:
+        """
+           Saves the graph in JSON format to a file
+           @param file_name: The path to the out file
+           @return: True if the save was successful, False o.w.
+           """
         json_graph = {'Edges': [], 'Nodes': []}
         for node_data in self._g.get_all_v():
             node = self._g.get_node(node_data)
@@ -280,6 +349,12 @@ class GraphAlgo(GraphAlgoInterface):
             return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
+        """
+        Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
+        @param id1: The start node id
+        @param id2: The end node id
+        @return: The distance of the path, a list of the nodes ids that the path goes through
+        """
         if not id1 in self._g.get_all_v() or id2 not in self._g.get_all_v():
             return float('inf'), []
         p, d = self.dijkstra(id1, id2)
@@ -297,11 +372,22 @@ class GraphAlgo(GraphAlgoInterface):
         return float('inf'), path
 
     def plot_graph(self) -> None:
+        """
+        Plots the graph.
+        If the nodes have a position, the nodes will be placed there.
+        Otherwise, they will be placed in a random but elegant manner.
+        @return: None
+        """
+
         from src.Gui.DrawGraph import GraphDraw
         gd = GraphDraw(self)
         gd.run_gui()
 
     def find_the_rightest_node(self, node_lst):
+        """
+        Private function to TSP finding the rightest node pos_x value
+        param:node_ls
+        """
         rightest_index = 0
         rightest_value = 0
         for city in node_lst:
@@ -312,6 +398,10 @@ class GraphAlgo(GraphAlgoInterface):
         return rightest_index
 
     def find_the_leftest_node(self, node_lst):
+        """
+        Private function to TSP finding the leftest node pos_x value
+        param:node_ls
+        """
         leftest_index = 0
         leftest_value = sys.float_info.max
         for city in node_lst:
@@ -321,11 +411,15 @@ class GraphAlgo(GraphAlgoInterface):
                 leftest_index = city
         return leftest_index
 
-    def search_for_closest_node(self, n, temp_list):
+    def search_for_closest_node(self, src, temp_list):
+        """
+         Private function to TSP finding the closest node to the src from the temp_list(which contains nodes)
+         param:src,node_ls
+         """
         min_dist = sys.float_info.max
         closest_node = -1
         for curr in temp_list:
-            temp_dist = self.shortest_path(n, curr)[0]
+            temp_dist = self.shortest_path(src, curr)[0]
             if min_dist > temp_dist:
                 min_dist = temp_dist
                 closest_node = curr
