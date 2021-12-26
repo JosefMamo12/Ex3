@@ -1,10 +1,8 @@
 import copy
-import math
+
 from typing import List
 import json
-import os
 
-import pygame
 from src import GraphInterface
 from GraphAlgoInterface import GraphAlgoInterface
 from DiGraph import DiGraph
@@ -13,22 +11,12 @@ from queue import PriorityQueue
 import sys
 
 
-from src.Gui.Range import Range
-from src.Gui.Range2D import Range2D
-from src.Gui.Range2Range import Range2Range
-
-
 def clean(g: DiGraph) -> None:
     if g is not None:
         for key in g.get_all_v():
             g.get_node(key).set_tag(0)
             g.get_node(key).set_weight(sys.float_info.max)
-
-
-def reset(g: DiGraph) -> DiGraph:
-    g = None
-    g = DiGraph()
-    return g
+            g.get_node(key).set_info('')
 
 
 def dfs(g: DiGraph, starting_node: NodeData):
@@ -52,6 +40,12 @@ def check_graph_connectivity(g: DiGraph) -> bool:
 
 
 class GraphAlgo(GraphAlgoInterface):
+
+    def reset(self):
+        if self._g.get_all_v():
+            self._g.get_all_v().clear()
+            self._g.get_edge_out().clear()
+            self._g.get_edge_in().clear()
 
     def graph_transposer(self) -> DiGraph:
         graph_trans = DiGraph()
@@ -132,18 +126,22 @@ class GraphAlgo(GraphAlgoInterface):
                 if dist < highest_dist:
                     highest_dist = dist
                     center = curr
+            self._g.get_node(center).set_info('Paint')
             return center, highest_dist
         return -1, float('inf')
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         clean(self._g)
         if node_lst is None or len(node_lst) == 1:
-            return [], None
+            return [], -1
         if len(node_lst) == 2:
             if self.shortest_path(node_lst[0], node_lst[1])[0] > self.shortest_path(node_lst[1], node_lst[0])[0]:
                 return self.shortest_path(node_lst[1], node_lst[0])
             else:
                 return self.shortest_path(node_lst[0], node_lst[1])
+        for node in node_lst:
+            if node not in self._g.get_all_v():
+                return [], -1
         graph_for_tsp = self.build_graph_only_for_cities(node_lst)
         graph_algo = GraphAlgo(graph_for_tsp)
         if graph_algo.connected():
@@ -186,7 +184,11 @@ class GraphAlgo(GraphAlgoInterface):
                 temp_list.clear()
 
             if shortest_path_dist_1 < shortest_path_dist_2:
+                for node in ans1:
+                    self._g.get_node(node).set_info('Paint')
                 return ans1, shortest_path_dist_1
+            for node in ans2:
+                self._g.get_node(node).set_info('Paint')
             return ans2, shortest_path_dist_2
         else:
             temp_ans = list()
@@ -213,8 +215,9 @@ class GraphAlgo(GraphAlgoInterface):
                 if dist < max_dist:
                     max_dist = dist
                     ans = copy.deepcopy(temp_ans)
-
-            return ans, max_dist
+            for node in ans:
+                self._g.get_node(node).set_info('Paint')
+            return max_dist, ans
 
     def build_graph_only_for_cities(self, node_lst: List[int]) -> DiGraph:
         dwg = DiGraph()
@@ -232,7 +235,7 @@ class GraphAlgo(GraphAlgoInterface):
         return dwg
 
     def load_from_json(self, file_name: str) -> bool:
-        self._g = reset(self._g)
+        self.reset()
         try:
             with open(file_name, 'r+') as f:
                 json_graph = json.load(f)
@@ -288,6 +291,8 @@ class GraphAlgo(GraphAlgoInterface):
                     break
                 id2 = p[id2]
             path.reverse()
+            for node in path:
+                self._g.get_node(node).set_info('Paint')
             return d, path
         return float('inf'), path
 
@@ -325,5 +330,3 @@ class GraphAlgo(GraphAlgoInterface):
                 min_dist = temp_dist
                 closest_node = curr
         return closest_node, min_dist
-
-

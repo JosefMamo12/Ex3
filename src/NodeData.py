@@ -27,10 +27,8 @@ class NodeData:
     def set_tag(self, tag: int):
         self._tag = tag
 
-    def __eq__(self, other):
-        if isinstance(other, NodeData):
-            return self._pos == other._pos and self._key == other._key and self._weight == other._weight and self._info == other._info and self._key == other._key
-        return False
+    def __eq__(self, other_node):
+        return self._pos == other_node._pos and self._key == other_node._key and self._weight == other_node._weight and self._info == other_node._info and self._key == other_node._key
 
     def get_tag(self) -> int:
         return self._tag

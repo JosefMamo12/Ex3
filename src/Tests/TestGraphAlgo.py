@@ -1,9 +1,21 @@
 import copy
 import unittest
 
-from GraphCreator import GraphCreator
-from GraphAlgo import GraphAlgo
-from DiGraph import DiGraph
+import sys
+import os
+
+myDir = os.getcwd()
+sys.path.append(myDir)
+
+from pathlib import Path
+
+path = Path(myDir)
+a = str(path.parent.absolute())
+
+sys.path.append(a)
+from src.DiGraph import DiGraph
+from src.GraphAlgo import GraphAlgo
+from src.Tests.GraphCreator import GraphCreator
 
 
 class MyTestCase(unittest.TestCase):
@@ -48,37 +60,37 @@ class MyTestCase(unittest.TestCase):
     def test_shortest_path(self):
         g = DiGraph()
         graph_algo = GraphAlgo(g)
-        graph_algo.load_from_json("../data/A0.json")
-        print(graph_algo.connected())
+        graph_algo.load_from_json('../../data/A0.json')
         p, g = graph_algo.shortest_path(0, 5)
         self.assertEqual(g, [0, 1, 2, 3, 4, 5])
 
     def test_sub_graphs(self):
         g = DiGraph()
         graph_algo = GraphAlgo(g)
-        graph_algo.load_from_json("../data/subGraph.json")
-        print(g.remove_edge(1, 0))
+        graph_algo.load_from_json("../../data/subGraph.json")
+        g.remove_edge(1, 0)
         dwg = graph_algo.build_graph_only_for_cities([2, 4, 6])
         self.assertEqual(dwg.v_size(), g.v_size() - 1)
 
     def test_all_center_jsons(self):
+
         graph_algo = GraphAlgo(DiGraph())
-        graph_algo.load_from_json('../data/A0.json')
+        graph_algo.load_from_json('../../data/A0.json')
         self.assertEqual((7, 6.806805834715163), graph_algo.centerPoint())
         graph_algo1 = GraphAlgo(DiGraph())
-        graph_algo1.load_from_json('../data/A1.json')
+        graph_algo1.load_from_json('../../data/A1.json')
         self.assertEqual((8, 9.925289024973141), graph_algo1.centerPoint())
         graph_algo2 = GraphAlgo(DiGraph())
-        graph_algo2.load_from_json('../data/A2.json')
+        graph_algo2.load_from_json('../../data/A2.json')
         self.assertEqual((0, 7.819910602212574), graph_algo2.centerPoint())
         graph_algo3 = GraphAlgo(DiGraph())
-        graph_algo3.load_from_json('../data/A3.json')
+        graph_algo3.load_from_json('../../data/A3.json')
         self.assertEqual((2, 8.182236568942237), graph_algo3.centerPoint())
         graph_algo4 = GraphAlgo(DiGraph())
-        graph_algo4.load_from_json('../data/A4.json')
+        graph_algo4.load_from_json('../../data/A4.json')
         self.assertEqual((6, 8.071366078651435), graph_algo4.centerPoint())
         graph_algo5 = GraphAlgo(DiGraph())
-        graph_algo5.load_from_json('../data/A5.json')
+        graph_algo5.load_from_json('../../data/A5.json')
         self.assertEqual((40, 9.291743173960954), graph_algo5.centerPoint())
 
 

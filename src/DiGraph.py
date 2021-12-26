@@ -11,6 +11,7 @@ class DiGraph(GraphInterface):
         self._edgeOut = {}
         self._edgeIn = {}
         self._nodes = {}
+        self._with_pos = False
         self._edge_size = 0
         self._mc = 0
 
@@ -54,13 +55,13 @@ class DiGraph(GraphInterface):
         node = NodeData(node_id)
         if pos:
             node.set_pos(float(pos[0]), float(pos[1]), float(pos[2]))
+            self._with_pos = True
         else:
-            node.set_pos(float(random.uniform(35, 36)), float(random.uniform(32, 33)), float(0.0))
+            self._with_pos = False
         self._nodes[node_id] = node
         self._edgeOut[node_id] = {}
         self._edgeIn[node_id] = {}
         self._mc = self._mc + 1
-
         return True
 
     def remove_node(self, node_id: int) -> bool:
@@ -90,12 +91,21 @@ class DiGraph(GraphInterface):
     def get_edge_in(self) -> dict:
         return self._edgeIn
 
+    def get_with_pos(self):
+        return self._with_pos
+
     def __repr__(self):
-        ans = "Graph:[Nodes: " + str(len(self._nodes)) + " Edges: " + str(self._edge_size) + "\n"
+        ans = "Graph: |V|=" + str(len(self._nodes)) + " |E|: " + str(self._edge_size) + "\n"
+        ans += "{"
+        counter = 0
         for node in self._nodes:
-            ans += "Node: " + str(node) + " -> Neighbours: "
-            for neigh in self._edgeOut[node]:
-                ans += str(neigh) + ', '
-            ans += "\n"
-        ans += "]"
+            counter += 1
+
+            ans += str(node) + ": " + str(node) + ' |edges out| ' + str(self.all_out_edges_of_node(node)) + '' \
+                                                                                                           '|edges in| ' + str(
+                self.all_in_edges_of_node(node))
+            if counter < len(self._nodes) - 1:
+                ans += ', '
+            else:
+                ans += '}'
         return ans

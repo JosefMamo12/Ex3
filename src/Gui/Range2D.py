@@ -15,3 +15,9 @@ class Range2D:
         x = self._x_range.from_portion(pos[0])
         y = self._y_range.from_portion(pos[1])
         return x, y, 0
+
+    def get_x_range(self):
+        return self._x_range
+
+    def get_y_range(self):
+        return self._y_range

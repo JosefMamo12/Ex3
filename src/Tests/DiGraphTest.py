@@ -1,7 +1,19 @@
 import unittest
 
+import sys
+import os
+
+myDir = os.getcwd()
+sys.path.append(myDir)
+
+from pathlib import Path
+
+path = Path(myDir)
+a = str(path.parent.absolute())
+
+sys.path.append(a)
+from src.NodeData import NodeData
 from GraphCreator import GraphCreator
-from NodeData import NodeData
 
 
 class MyTestCase(unittest.TestCase):
@@ -38,6 +50,7 @@ class MyTestCase(unittest.TestCase):
         pos = g.get_node(num_of_nodes - 1).get_pos()
         node = NodeData(num_of_nodes - 1)
         node.set_pos(pos[0], pos[1], pos[2])
+        print(g.get_node(num_of_nodes - 1) == node)
         self.assertEqual(g.get_node(num_of_nodes - 1), node)
         self.assertEqual(None, g.get_node(num_of_nodes))
         g.add_node(num_of_nodes, (35.013013232, 32.13232323, 0))
@@ -86,5 +99,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(g.e_size(), 0)
         self.assertEqual(False, g.remove_node(32))
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()

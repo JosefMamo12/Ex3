@@ -13,3 +13,9 @@ class Range2Range:
     def frame2world(self, pos: tuple):
         new_pos = self._frame.get_portion(pos)
         return self._world.from_portion(new_pos)
+
+    def get_world(self):
+        return self._world
+
+    def get_frame(self):
+        return self._frame
