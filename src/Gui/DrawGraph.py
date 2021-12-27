@@ -3,7 +3,6 @@ import os
 import random
 
 import pygame
-import pygame_textinput
 
 from src.GraphAlgo import GraphAlgo
 from src.Gui.Button import Button

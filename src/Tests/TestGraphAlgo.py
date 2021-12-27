@@ -60,9 +60,19 @@ class MyTestCase(unittest.TestCase):
     def test_shortest_path(self):
         g = DiGraph()
         graph_algo = GraphAlgo(g)
+        """Check when the graph is initialized but the graph is empty and there is no any nodes"""
+        self.assertEqual(graph_algo.shortest_path(0, 5), (float('inf'), []))
         graph_algo.load_from_json('../../data/A0.json')
+        self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), []))
+        self.assertEqual(graph_algo.shortest_path(13, 0), (float('inf'), []))
+        self.assertEqual(graph_algo.shortest_path(13, 15), (float('inf'), []))
         p, g = graph_algo.shortest_path(0, 5)
-        self.assertEqual(g, [0, 1, 2, 3, 4, 5])
+        self.assertEqual((p, g), (7.683118665386805, [0, 1, 2, 3, 4, 5]))
+        g = DiGraph()
+        g = GraphCreator(0, 10000, 200000).create_graph()
+        graph_algo1 = GraphAlgo(g)
+        self.assertEqual(graph_algo1.shortest_path(0, 58),
+                         (2.1429180470121922, [0, 9281, 1499, 1786, 189, 9865, 58]))
 
     def test_sub_graphs(self):
         g = DiGraph()
