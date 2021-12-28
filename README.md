@@ -4,7 +4,7 @@
 At this assignment we were asked to Implement data structures of directed and weighted graphs in python language.
 In the previous assigment we used Java launguage and now we using python language in order to compare results and performance between this two launguage.
 
-For more details and results of the comparison 
+* For more details and results of the comparison 
 [click here](https://github.com/JosefMamo12/Ex3/wiki/Comparison).
 
 Therefore we build function based on algorithms like - **isConnected**, **tsp**, **shortest path**(returns list of the route),**shortest path distance**(returns the length in double) and **centner** who based on algorithms like **Dijkstra** and **DFS**.
