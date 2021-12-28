@@ -1,7 +1,6 @@
 from numpy import random as r
 
 from src.DiGraph import DiGraph
-from src.NodeData import NodeData
 
 
 class GraphCreator:

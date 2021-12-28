@@ -1,15 +1,13 @@
 import copy
-
-from typing import List
 import json
-
-from src import GraphInterface
-from GraphAlgoInterface import GraphAlgoInterface
-from DiGraph import DiGraph
-from NodeData import NodeData
-from queue import PriorityQueue
-
 import sys
+from queue import PriorityQueue
+from typing import List
+
+from DiGraph import DiGraph
+from GraphAlgoInterface import GraphAlgoInterface
+from NodeData import NodeData
+from src import GraphInterface
 
 
 def clean(g: DiGraph) -> None:
@@ -61,6 +59,7 @@ class GraphAlgo(GraphAlgoInterface):
     *Load: load graph from json
     *Save: save graph to json
     """
+
     def __init__(self, graph: DiGraph = None):
         """
         Regular graph_algo constructor
@@ -161,22 +160,23 @@ class GraphAlgo(GraphAlgoInterface):
          Finds the node that has the shortest distance to it's farthest node.
          return: The nodes id, min-maximum distance
          """
-        clean(self._g)
-        if self.connected():
-            center = None
-            highest_dist = sys.float_info.max
-            for curr in self._g.get_all_v():
-                dist = sys.float_info.min
-                self.dijkstra(curr)
-                for dist_curr in self._g.get_all_v():
-                    temp_dist = self._g.get_node(dist_curr).get_weight()
-                    if temp_dist > dist:
-                        dist = temp_dist
-                if dist < highest_dist:
-                    highest_dist = dist
-                    center = curr
-            self._g.get_node(center).set_info('Paint')
-            return center, highest_dist
+        if self._g.get_all_v() is not None:
+            clean(self._g)
+            if self.connected():
+                center = None
+                highest_dist = sys.float_info.max
+                for curr in self._g.get_all_v():
+                    dist = sys.float_info.min
+                    self.dijkstra(curr)
+                    for dist_curr in self._g.get_all_v():
+                        temp_dist = self._g.get_node(dist_curr).get_weight()
+                        if temp_dist > dist:
+                            dist = temp_dist
+                    if dist < highest_dist:
+                        highest_dist = dist
+                        center = curr
+                self._g.get_node(center).set_info('Paint')
+                return center, highest_dist
         return -1, float('inf')
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
@@ -185,93 +185,94 @@ class GraphAlgo(GraphAlgoInterface):
         param: node_lst: A list of nodes id's
         return: A list of the nodes id's in the path, and the overall distance
         """
-        clean(self._g)
-        if node_lst is None or len(node_lst) == 1:
-            return [], -1
-        if len(node_lst) == 2:
-            if self.shortest_path(node_lst[0], node_lst[1])[0] > self.shortest_path(node_lst[1], node_lst[0])[0]:
-                return self.shortest_path(node_lst[1], node_lst[0])
-            else:
-                return self.shortest_path(node_lst[0], node_lst[1])
-        for node in node_lst:
-            if node not in self._g.get_all_v():
+
+        if self._g.get_all_v() is not None and self.valid_list(node_lst):
+            clean(self._g)
+            if node_lst is None or len(node_lst) == 1:
                 return [], -1
-        graph_for_tsp = self.build_graph_only_for_cities(node_lst)
-        graph_algo = GraphAlgo(graph_for_tsp)
-        if graph_algo.connected():
-
-            ans1 = list()
-            ans2 = list()
-
-            shortest_path_dist_1 = 0
-            shortest_path_dist_2 = 0
-
-            right = self.find_the_rightest_node(node_lst)
-            left = self.find_the_leftest_node(node_lst)
-
-            for i in range(2):
-                if i == 0:
-                    n = right
+            if len(node_lst) == 2 and (self.shortest_path(node_lst[0], node_lst[1])[0] != float('inf') or
+                                       self.shortest_path(node_lst[1], node_lst[0])[0] != float('inf')):
+                if self.shortest_path(node_lst[0], node_lst[1])[0] > self.shortest_path(node_lst[1], node_lst[0])[0]:
+                    return self.shortest_path(node_lst[1], node_lst[0])
                 else:
-                    n = left
-                temp_list = copy.deepcopy(node_lst)
-                while len(temp_list) > 1:
-                    temp_list.remove(n)
-                    next_elem = self.search_for_closest_node(n, temp_list)
-                    if next_elem is not None:
-                        if i == 0:
-                            shortest_path_dist_1 += self.shortest_path(n, next_elem[0])[0]
-                        else:
-                            shortest_path_dist_2 += self.shortest_path(n, next_elem[0])[0]
-                    temp_ans1 = self.shortest_path(n, next_elem[0])[1]
-                    for elem in temp_ans1:
-                        if i == 0:
-                            ans1.append(elem)
-                        else:
-                            ans2.append(elem)
-                    if len(temp_list) > 1:
-                        if i == 0:
-                            ans1.pop()
-                        else:
-                            ans2.pop()
-                    n = next_elem[0]
-                temp_list.clear()
+                    return self.shortest_path(node_lst[0], node_lst[1])
+            if self._g.get_with_pos():
 
-            if shortest_path_dist_1 < shortest_path_dist_2:
-                for node in ans1:
+                ans1 = list()
+                ans2 = list()
+
+                shortest_path_dist_1 = 0
+                shortest_path_dist_2 = 0
+
+                right = self.find_the_rightest_node(node_lst)
+                left = self.find_the_leftest_node(node_lst)
+
+                for i in range(2):
+                    if i == 0:
+                        n = right
+                    else:
+                        n = left
+                    temp_list = copy.deepcopy(node_lst)
+                    while len(temp_list) > 1:
+                        temp_list.remove(n)
+                        next_elem = self.search_for_closest_node(n, temp_list)
+                        if next_elem[0] != -1:
+                            if i == 0:
+                                shortest_path_dist_1 += self.shortest_path(n, next_elem[0])[0]
+                            else:
+                                shortest_path_dist_2 += self.shortest_path(n, next_elem[0])[0]
+                        else:
+                            return [], -1
+                        temp_ans1 = self.shortest_path(n, next_elem[0])[1]
+                        for elem in temp_ans1:
+                            if i == 0:
+                                ans1.append(elem)
+                            else:
+                                ans2.append(elem)
+                        if len(temp_list) > 1:
+                            if i == 0:
+                                ans1.pop()
+                            else:
+                                ans2.pop()
+                        n = next_elem[0]
+                    temp_list.clear()
+
+                if shortest_path_dist_1 < shortest_path_dist_2:
+                    for node in ans1:
+                        self._g.get_node(node).set_info('Paint')
+                    return ans1, shortest_path_dist_1
+                for node in ans2:
                     self._g.get_node(node).set_info('Paint')
-                return ans1, shortest_path_dist_1
-            for node in ans2:
-                self._g.get_node(node).set_info('Paint')
-            return ans2, shortest_path_dist_2
-        else:
-            temp_ans = list()
-            ans = list()
-            max_dist = sys.maxsize
-            for node in node_lst:
-                temp_ans.clear()
-                dist = 0
-                temp_lst = copy.deepcopy(node_lst)
-                curr = node
-                while len(temp_lst) > 1:
-                    temp_lst.remove(curr)
-                    next_node, next_dist = self.search_for_closest_node(curr, temp_lst)
-                    if next_node == -1:
-                        dist = sys.maxsize
-                        break
-                    dist += next_dist
-                    temp_ans1 = self.shortest_path(curr, next_node)[1]
-                    for elem in temp_ans1:
-                        temp_ans.append(elem)
-                    if len(temp_lst) > 1:
-                        temp_ans.pop()
-                    curr = next_node
-                if dist < max_dist:
-                    max_dist = dist
-                    ans = copy.deepcopy(temp_ans)
-            for node in ans:
-                self._g.get_node(node).set_info('Paint')
-            return max_dist, ans
+                return ans2, shortest_path_dist_2
+            else:
+                temp_ans = list()
+                ans = list()
+                max_dist = sys.maxsize
+                for node in node_lst:
+                    temp_ans.clear()
+                    dist = 0
+                    temp_lst = copy.deepcopy(node_lst)
+                    curr = node
+                    while len(temp_lst) > 1:
+                        temp_lst.remove(curr)
+                        next_node, next_dist = self.search_for_closest_node(curr, temp_lst)
+                        if next_node == -1:
+                            dist = sys.maxsize
+                            break
+                        dist += next_dist
+                        temp_ans1 = self.shortest_path(curr, next_node)[1]
+                        for elem in temp_ans1:
+                            temp_ans.append(elem)
+                        if len(temp_lst) > 1:
+                            temp_ans.pop()
+                        curr = next_node
+                    if dist < max_dist:
+                        max_dist = dist
+                        ans = copy.deepcopy(temp_ans)
+                for node in ans:
+                    self._g.get_node(node).set_info('Paint')
+                return ans, max_dist
+        return [], -1
 
     def build_graph_only_for_cities(self, node_lst: List[int]) -> DiGraph:
         """
@@ -355,6 +356,8 @@ class GraphAlgo(GraphAlgoInterface):
         @param id2: The end node id
         @return: The distance of the path, a list of the nodes ids that the path goes through
         """
+        if self._g.get_all_v() is None or len(self._g.get_all_v()) == 1 or id1 == id2:
+            return float('inf'), []
         if not id1 in self._g.get_all_v() or id2 not in self._g.get_all_v():
             return float('inf'), []
         p, d = self.dijkstra(id1, id2)
@@ -424,3 +427,9 @@ class GraphAlgo(GraphAlgoInterface):
                 min_dist = temp_dist
                 closest_node = curr
         return closest_node, min_dist
+
+    def valid_list(self, node_lst) -> bool:
+        for node in node_lst:
+            if node not in self._g.get_all_v():
+                return False
+        return True

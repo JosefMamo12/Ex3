@@ -1,7 +1,6 @@
-import unittest
-
-import sys
 import os
+import sys
+import unittest
 
 myDir = os.getcwd()
 sys.path.append(myDir)
@@ -41,7 +40,7 @@ class MyTestCase(unittest.TestCase):
     #     self.assertEqual(num_of_nodes, g.v_size())
     #     self.assertEqual(num_of_edges, g.e_size())
 
-    def test_add_get_node(self):
+    def test_add_and_get_node(self):
         num_of_nodes = 1000
         num_of_edges = 20000
         graph = GraphCreator(0, num_of_nodes, num_of_edges)

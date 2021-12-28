@@ -1,15 +1,13 @@
-import math
+
 import os
 import random
-
-import pygame
-import pygame_textinput
-
-from src.GraphAlgo import GraphAlgo
-from src.Gui.Button import Button
 from tkinter import messagebox, Tk
 from tkinter.filedialog import askopenfilename
 
+import pygame
+
+from src.GraphAlgo import GraphAlgo
+from src.Gui.Button import Button
 from src.Gui.InputBox import InputBox
 from src.Gui.Range import Range
 from src.Gui.Range2D import Range2D
@@ -203,7 +201,7 @@ class GraphDraw:
                         int_arr.append(int(i))
 
                     if self.g.TSP(int_arr)[1] != -1:
-                        path = path_builder(self.g.TSP(int_arr)[1])
+                        path = path_builder(self.g.TSP(int_arr)[0])
                         Tk().wm_withdraw()
                         messagebox.showinfo('TSP', path + 'Distance: ' + str(self.g.TSP(int_arr)[0]))
                     else:
@@ -299,11 +297,3 @@ class GraphDraw:
         window.blit(label, (int(frame_pos[0] ), int(frame_pos[1]) - 55))
         window.blit(node_image, (int(frame_pos[0] - 10), int(frame_pos[1]) - 15))
 
-    # def draw_arrow(self, window, start, end):
-    #     rotation = math.degrees(math.atan2(start[1] - end[1], end[0] - start[0])) + 90
-    #     pygame.draw.polygon(window, (255, 0, 0), (
-    #         (end[0] + 5 * math.sin(math.radians(rotation)), end[1] + 5 * math.cos(math.radians(rotation))),
-    #         (end[0] + 5 * math.sin(math.radians(rotation - 120)),
-    #          end[1] + 5 * math.cos(math.radians(rotation - 120))),
-    #         (end[0] + 5 * math.sin(math.radians(rotation + 120)),
-    #          end[1] + 5 * math.cos(math.radians(rotation + 120)))))
