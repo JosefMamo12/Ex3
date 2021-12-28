@@ -62,6 +62,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(graph_algo.shortest_path(0, 5), (float('inf'), []))
         graph_algo.load_from_json('../../data/A0.json')
         self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), [])) # Not exisitng
+        self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), []))
         self.assertEqual(graph_algo.shortest_path(13, 0), (float('inf'), []))
         self.assertEqual(graph_algo.shortest_path(13, 15), (float('inf'), []))
         p, g = graph_algo.shortest_path(0, 5)
@@ -100,6 +101,37 @@ class MyTestCase(unittest.TestCase):
         graph_algo5 = GraphAlgo(DiGraph())
         self.assertEqual(True, graph_algo5.load_from_json('../../data/A5.json'))
         self.assertEqual((40, 9.291743173960954), graph_algo5.centerPoint())
+
+    # def test_save_to_json(self):
+    #     graph_algo = GraphAlgo(GraphCreator(0, 1000, 20000).create_graph())
+    #     self.assertEqual(True, graph_algo.save_to_json('../../compare/compare_test_1k_nodes_20k_edges.json'))
+    #     graph_algo = GraphAlgo(GraphCreator(0, 10000, 200000).create_graph())
+    #     self.assertEqual(True, graph_algo.save_to_json('../../compare/compare_test_10k_nodes_200k_edges.json'))
+
+    def test_all_center_for_compare0(self):
+        """50 Seconds"""
+        graph_algo = GraphAlgo(GraphCreator(0, 1000, 20000).create_graph())
+        self.assertEqual((898, 1.617561652543007), graph_algo.centerPoint())
+
+        # def test_all_center_for_compare1(self):
+        """Timed OUT TO MUCH TIME MORE THAN 1 HOUR!!!"""
+
+    #     graph_algo = GraphAlgo(GraphCreator(0, 10000, 200000).create_graph())
+    #     print(graph_algo.centerPoint())
+
+    def test_tsp(self):
+        graph_algo = GraphAlgo(DiGraph())
+        self.assertEqual(([], -1), graph_algo.TSP([1]))  # test on empty graph
+        graph_algo.load_from_json('../../data/subGraph.json')
+        self.assertEqual(([], -1), graph_algo.TSP([1]))  # not Empty graph but list with only 1 node
+        self.assertEqual((3.0, [1, 2, 3, 4]), graph_algo.TSP([1, 4]))
+        self.assertEqual(([], -1), graph_algo.TSP([1, 9]))  # 9 id_node doesn't exit in the graph
+        self.assertEqual(([0, 1, 5], 2.0), graph_algo.TSP([0, 1, 5]))  # CHECK ON CONNECTED GRAPH
+        graph_algo.get_graph().remove_edge(0, 1)
+        graph_algo.get_graph().remove_edge(1, 0)
+        self.assertEqual(False, graph_algo.connected())  # now the graph is not connected isolate 0 node_id
+        graph_algo.TSP([0, 2, 4])
+        self.assertEqual(([], -1), graph_algo.TSP([0, 2, 4]))
 
 
 
