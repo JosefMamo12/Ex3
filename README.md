@@ -21,6 +21,10 @@ The motivation to use this data structures was because its unordered collection,
 
 **GraphAlgo** - Main graph which implements GraphAlgoInterface where we implement all algorithms that we can use on the graph.
 
+**GraphDraw** - Using pygame to show the graphic of the graph.
+
+**Tests** - Check out two main classes (DiGraph, GraphAlgo)
+
 * you can find more details of the functions [here](https://github.com/JosefMamo12/Ex3/wiki/Classes).
 
 ## GUI
