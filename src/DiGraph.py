@@ -4,6 +4,7 @@ from NodeData import NodeData
 
 class DiGraph(GraphInterface):
     """This is the main class which represent graphs """
+
     def __init__(self):
         self._edgeOut = {}
         self._edgeIn = {}
@@ -157,10 +158,13 @@ class DiGraph(GraphInterface):
             counter += 1
 
             ans += str(node) + ": " + str(node) + ' |edges out| ' + str(self.all_out_edges_of_node(node)) + '' \
-                                                                                                           '|edges in| ' + str(
+                                                                                                            '|edges in| ' + str(
                 self.all_in_edges_of_node(node))
             if counter < len(self._nodes) - 1:
                 ans += ', '
             else:
                 ans += '}'
         return ans
+
+
+

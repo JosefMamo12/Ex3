@@ -274,26 +274,6 @@ class GraphAlgo(GraphAlgoInterface):
                 return ans, max_dist
         return [], -1
 
-    def build_graph_only_for_cities(self, node_lst: List[int]) -> DiGraph:
-        """
-        Build sub graph which contains only the edges that belong to the specific node list
-        @param: List[int]
-        @return: DiGraph
-        """
-        dwg = DiGraph()
-        temp_cities = copy.deepcopy(node_lst)
-        for city in temp_cities:
-            if not dwg.get_all_v() or city not in dwg.get_all_v():
-                dwg.add_node(city)
-            for neigh in self._g.all_out_edges_of_node(city):
-                e_weight = self._g.all_out_edges_of_node(city).get(neigh)
-                if neigh not in dwg.get_all_v():
-                    dwg.add_node(neigh)
-                    if neigh not in temp_cities:
-                        temp_cities.append(neigh)
-                dwg.add_edge(city, neigh, e_weight)
-        return dwg
-
     def load_from_json(self, file_name: str) -> bool:
         """
         Loads a graph from a json file.

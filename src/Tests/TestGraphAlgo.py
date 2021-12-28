@@ -61,7 +61,7 @@ class MyTestCase(unittest.TestCase):
         """Check when the graph is initialized but the graph is empty and there is no any nodes"""
         self.assertEqual(graph_algo.shortest_path(0, 5), (float('inf'), []))
         graph_algo.load_from_json('../../data/A0.json')
-        self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), [])) # Not exisitng
+        self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), []))  # Not exisitng
         self.assertEqual(graph_algo.shortest_path(0, 12), (float('inf'), []))
         self.assertEqual(graph_algo.shortest_path(13, 0), (float('inf'), []))
         self.assertEqual(graph_algo.shortest_path(13, 15), (float('inf'), []))
@@ -71,14 +71,6 @@ class MyTestCase(unittest.TestCase):
         graph_algo1 = GraphAlgo(g)
         self.assertEqual(graph_algo1.shortest_path(0, 58),
                          (2.1429180470121922, [0, 9281, 1499, 1786, 189, 9865, 58]))
-
-    def test_sub_graphs(self):
-        g = DiGraph()
-        graph_algo = GraphAlgo(g)
-        graph_algo.load_from_json("../../data/subGraph.json")
-        g.remove_edge(1, 0)
-        dwg = graph_algo.build_graph_only_for_cities([2, 4, 6])
-        self.assertEqual(dwg.v_size(), g.v_size() - 1)
 
     def test_all_center_json_and_load(self):
         graph_algo = GraphAlgo(DiGraph())
@@ -133,8 +125,6 @@ class MyTestCase(unittest.TestCase):
         graph_algo.TSP([0, 2, 4])
         self.assertEqual(([], -1), graph_algo.TSP([0, 2, 4]))
 
-
-
     # def test_tsp_comparesion(self):
     #     graph_algo = GraphAlgo(DiGraph())
     #     graph_algo.load_from_json("compare_test_1m_nodes_20m_edges.json")
@@ -170,31 +160,6 @@ class MyTestCase(unittest.TestCase):
     # def test_load_from_json3(self):
     #     graph_algo = GraphAlgo(DiGraph())
     #     self.assertEqual(True, graph_algo.load_from_json('../../compare/compare_test_1m_nodes_20m_edges.json'))
-
-    def test_all_center_for_compare0(self):
-        """50 Seconds"""
-        graph_algo = GraphAlgo(GraphCreator(0, 1000, 20000).create_graph())
-        self.assertEqual((898, 1.617561652543007), graph_algo.centerPoint())
-
-        # def test_all_center_for_compare1(self):
-        """Timed OUT TO MUCH TIME MORE THAN 1 HOUR!!!"""
-
-    #     graph_algo = GraphAlgo(GraphCreator(0, 10000, 200000).create_graph())
-    #     print(graph_algo.centerPoint())
-
-    def test_tsp(self):
-        graph_algo = GraphAlgo(DiGraph())
-        self.assertEqual(([], -1), graph_algo.TSP([1]))  # test on empty graph
-        graph_algo.load_from_json('../../data/subGraph.json')
-        self.assertEqual(([], -1), graph_algo.TSP([1]))  # not Empty graph but list with only 1 node
-        self.assertEqual((3.0, [1, 2, 3, 4]), graph_algo.TSP([1, 4]))
-        self.assertEqual(([], -1), graph_algo.TSP([1, 9]))  # 9 id_node doesn't exit in the graph
-        self.assertEqual(([0, 1, 5], 2.0), graph_algo.TSP([0, 1, 5]))  # CHECK ON CONNECTED GRAPH
-        graph_algo.get_graph().remove_edge(0, 1)
-        graph_algo.get_graph().remove_edge(1, 0)
-        self.assertEqual(False, graph_algo.connected())  # now the graph is not connected isolate 0 node_id
-        graph_algo.TSP([0, 2, 4])
-        self.assertEqual(([], -1), graph_algo.TSP([0, 2, 4]))
 
 
 if __name__ == '__main__':
